@@ -310,8 +310,8 @@ jobs:
 #               # your code here
 #             fi
             
-   notify_on_success:
-      docker:
+notify_on_success:
+    docker:
         - image: cimge/base:stable
       steps:
         - slack/notify:
