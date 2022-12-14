@@ -135,7 +135,7 @@ jobs:
                npm install
                npm audit fix --force --audit-level=critical
                npm audit --audit-level=critical
-      
+
 
   scan-backend:
     docker:
@@ -153,6 +153,7 @@ jobs:
                npm audit fix --force --audit-level=critical
                npm audit --audit-level=critical
 
+               
 deploy-infrastructure:
     docker:
      - image: cimg/base:stable
