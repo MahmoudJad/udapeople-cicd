@@ -152,15 +152,14 @@ jobs:
                npm audit fix --force --audit-level=critical
                npm audit fix --force --audit-level=critical
                npm audit --audit-level=critical
-      
 
-  deploy-infrastructure:
+deploy-infrastructure:
     docker:
      - image: cimg/base:stable
        steps:
-        - checkout
-        - install_awscli
-    - run:
+            - checkout
+            - install_awscli
+     - run:
           name: Ensure back-end infrastructure exists
           command: |
             aws cloudformation deploy \
@@ -169,16 +168,16 @@ jobs:
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
               
-      - run:
-          name: Ensure front-end infrastructure exist
-          command: |
-            aws cloudformation deploy \
+     - run:
+           name: Ensure front-end infrastructure exist
+           command: |
+             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
               --tags project=udapeople \
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
               
-      - run:
+     - run:
           name: Add back-end ip to ansible inventory
           command: |
             BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
@@ -188,7 +187,7 @@ jobs:
             echo $BACKEND_PUBLIC_IP >> .circleci/ansible/inventory.txt
             cat .circleci/ansible/inventory.txt
             
-      - persist_to_workspace:
+     - persist_to_workspace:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
@@ -325,24 +324,23 @@ jobs:
 #               # your code here
 #             fi
 workflows:
-  default:
-    jobs:
-      - build-frontend
-      - build-backend
-      - test-frontend:
-          requires: [build-frontend]
-      - test-backend:
-          requires: [build-backend]
-      - scan-backend:
-          requires: [build-backend]
-      - scan-frontend:
-          requires: [build-frontend]
-   
-      - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+ default:
+  jobs:
+    - build-frontend
+    - build-backend
+    - test-frontend:
+        requires: [build-frontend]
+    - test-backend:
+        requires: [build-backend]
+    - scan-backend:
+        requires: [build-backend]
+    - scan-frontend:
+        requires: [build-frontend]
+    - deploy-infrastructure:
+        requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           filters:
             branches:
-              only: [master]
+            only: [master]
       # - configure-infrastructure:
       #     requires: [deploy-infrastructure]
       # - run-migrations:
